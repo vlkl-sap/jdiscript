@@ -8,7 +8,7 @@ import org.jdiscript.util.VMLauncher;
 public class HelloWorldExample {
     
     public static void main(final String[] args) {
-        String OPTIONS = "-cp ./build/classes/java/example";
+        String OPTIONS = "-cp ./example/target/classes";
         String MAIN = "org.jdiscript.example.HelloWorld";
 
         JDIScript j = new JDIScript(new VMLauncher(OPTIONS, MAIN).start());

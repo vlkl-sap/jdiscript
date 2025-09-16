@@ -11,7 +11,7 @@ import com.sun.jdi.ReferenceType;
 
 class JustIterators {   
         
-    static String OPTIONS = "-cp ./build/classes/java/example";
+    static String OPTIONS = "-cp ./example/target/classes";
     static String MAIN = "org.jdiscript.example.HelloWorld";       
 
     public static void main(String[] args) {
