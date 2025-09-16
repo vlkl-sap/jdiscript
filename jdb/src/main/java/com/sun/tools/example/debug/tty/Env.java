@@ -44,10 +44,6 @@ import java.io.*;
 
 class Env {
 
-    static EventRequestSpecList specList = new EventRequestSpecList();
-
-    private static VMConnection connection;
-
     private static SourceMapper sourceMapper = new SourceMapper("");
     private static List<String> excludes;
 
@@ -56,45 +52,6 @@ class Env {
 
     private static HashMap<String, Value> savedValues = new HashMap<String, Value>();
     private static Method atExitMethod;
-
-    static void init(String connectSpec, boolean openNow, int flags, boolean trackVthreads, String extraOptions) {
-        connection = new VMConnection(connectSpec, flags, trackVthreads, extraOptions);
-        if (!connection.isLaunch() || openNow) {
-            connection.open();
-        }
-    }
-
-    static void setTraceFlags(int flags) {
-        connection.setTraceFlags(flags);
-    }
-
-    static VMConnection connection() {
-        return connection;
-    }
-
-    static VirtualMachine vm() {
-        return connection.vm();
-    }
-
-    static void shutdown() {
-        shutdown(null);
-    }
-
-    static void shutdown(String message) {
-        if (connection != null) {
-            try {
-                connection.disposeVM();
-            } catch (VMDisconnectedException e) {
-                // Shutting down after the VM has gone away. This is
-                // not an error, and we just ignore it.
-            }
-        }
-        if (message != null) {
-            MessageOutput.lnprint(message);
-            MessageOutput.println();
-        }
-        System.exit(0);
-    }
 
     static void setSourcePath(String srcPath) {
         sourceMapper = new SourceMapper(srcPath);
@@ -204,58 +161,6 @@ class Env {
         } catch (AbsentInformationException e) {
             throw new IllegalArgumentException();
         }
-    }
-
-    /** Return a description of an object. */
-    static String description(ObjectReference ref) {
-        ReferenceType clazz = ref.referenceType();
-        long id = ref.uniqueID();
-        if (clazz == null) {
-            return Long.toString(id);
-        } else {
-            return MessageOutput.format("object description and id",
-                                        new Object [] {clazz.name(),
-                                                       Long.toString(id)});
-        }
-    }
-
-    static ReferenceType getReferenceTypeFromToken(String idToken) {
-        ReferenceType cls = null;
-        if (Character.isDigit(idToken.charAt(0))) {
-            cls = null;
-        } else if (idToken.startsWith("*.")) {
-        // This notation saves typing by letting the user omit leading
-        // package names. The first
-        // loaded class whose name matches this limited regular
-        // expression is selected.
-        idToken = idToken.substring(1);
-        for (ReferenceType type : Env.vm().allClasses()) {
-            if (type.name().endsWith(idToken)) {
-                cls = type;
-                break;
-            }
-        }
-    } else {
-            // It's a class name
-            List<ReferenceType> classes = Env.vm().classesByName(idToken);
-            if (classes.size() > 0) {
-                // TO DO: handle multiples
-                cls = classes.get(0);
-            }
-        }
-        return cls;
-    }
-
-    static Set<String> getSaveKeys() {
-        return savedValues.keySet();
-    }
-
-    static Value getSavedValue(String key) {
-        return savedValues.get(key);
-    }
-
-    static void setSavedValue(String key, Value value) {
-        savedValues.put(key, value);
     }
 
     static class SourceCode {

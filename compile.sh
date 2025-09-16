@@ -5,6 +5,14 @@ set -e
 DIR="$(dirname "$(readlink -f "$0")")"
 
 
+cd "$DIR/jdb"
+
+javac -g  \
+  -sourcepath src/main/java/ \
+  -d target/classes/ \
+  src/main/java/com/sun/tools/example/debug/tty/*.java
+
+
 cd "$DIR/jdiscript"
 
 javac \
