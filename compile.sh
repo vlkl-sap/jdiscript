@@ -16,14 +16,12 @@ javac -g  \
 cd "$DIR/jdiscript"
 
 javac \
+  --add-exports jdk.jdi/com.sun.tools.example.debug.expr=ALL-UNNAMED \
+  -cp .:../jdb/target/classes/ \
   -sourcepath src/main/java/ \
   -d target/classes/ \
   src/main/java/org/jdiscript/JDIScript.java \
   src/main/java/org/jdiscript/util/*.java
-
-#  --add-exports jdk.jdi/com.sun.tools.example.debug.expr=ALL-UNNAMED \
-
-
 
 
 cd "$DIR/example"

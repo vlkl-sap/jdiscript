@@ -42,7 +42,7 @@ import java.util.*;
 import java.io.*;
 
 
-class Env {
+public class Env {
 
     private static SourceMapper sourceMapper = new SourceMapper("");
     private static List<String> excludes;

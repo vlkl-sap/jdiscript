@@ -71,6 +71,16 @@ import com.sun.jdi.request.ThreadDeathRequest;
 import com.sun.jdi.request.ThreadStartRequest;
 import com.sun.jdi.request.VMDeathRequest;
 
+import com.sun.jdi.Value;
+import com.sun.jdi.event.LocatableEvent;
+import com.sun.jdi.InvocationException;
+import com.sun.jdi.InvalidTypeException;
+import com.sun.jdi.ClassNotLoadedException;
+import com.sun.tools.example.debug.tty.Env;
+import com.sun.tools.example.debug.expr.ExpressionParser;
+import com.sun.tools.example.debug.expr.ParseException;
+
+
 /**
  * Top-level class encapsulating common operations for working with
  * JDI and jdiscript.
@@ -901,5 +911,25 @@ public class JDIScript {
     	final String methSig = String.join(", ", method.argumentTypeNames());
     	return refType + "." + methName + "(" + methSig + ")";
     }
+
+
+    public Value evaluate(String expr, LocatableEvent e) throws org.jdiscript.ParseException,
+                                                                InvocationException,
+                                                                InvalidTypeException,
+                                                                ClassNotLoadedException,
+                                                                IncompatibleThreadStateException {
+        ExpressionParser.GetFrame frameGetter = new ExpressionParser.GetFrame() {
+            @Override
+            public StackFrame get() throws IncompatibleThreadStateException {
+                return e.thread().frame(0);
+            }
+        };
+        try {
+            return ExpressionParser.evaluate(expr, vm(), frameGetter);
+        } catch (ParseException pex) {
+            throw new org.jdiscript.ParseException(pex);
+        }
+    }
+
 
 }
